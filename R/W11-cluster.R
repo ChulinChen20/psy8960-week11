@@ -58,9 +58,11 @@ grids <- function(x) {
 Table3 <- c()
 Table4 <- c()
 
+
 for(i in algo) {
   set.seed(12)
   
+
   tic()
   model1 <- train(
     workhours~.,
@@ -73,9 +75,11 @@ for(i in algo) {
   )
   t1<- toc()
   
+
   local_cluster <- makeCluster(7)
   registerDoParallel(local_cluster)
   
+
   tic()
   model2 <- train(
     workhours~.,
@@ -88,27 +92,27 @@ for(i in algo) {
   )
   t2<- toc()
   
+
   stopCluster(local_cluster)
   registerDoSEQ()
   
   # Publication
   cv_rsq <- max(model1$results$Rsquared)
   ho_rsq <- cor(predict(model1, gss_test,na.action = na.pass),gss_test$workhours)^2
-  table_o <- cbind(i,str_remove(format(round(cv_rsq,2),nsmall=2),"^0"),str_remove(format(round(ho_rsq,2),nsmall=2),"^0"))
-  Table3  <- rbind(Table3,table_o)
+  table <- cbind(i,str_remove(format(round(cv_rsq,2),nsmall=2),"^0"),str_remove(format(round(ho_rsq,2),nsmall=2),"^0"))
+  Table3  <- rbind(Table3,table)
   colnames(Table3) <- c("algo","cv_rsq","ho_rsq")
   
   original <- t1$toc - t1$tic
   parallelized <- t2$toc - t2$tic
-  table_p <- cbind(i,original,parallelized)
-  Table4 <- rbind(Table4,table_p)
+  table2 <- cbind(i,original,parallelized)
+  Table4 <- rbind(Table4,table2)
   colnames(Table4) <- c("algo","supercomputer","supercomputer_7")
 }
 
 tibble(Table3)
 tibble(Table4)
 
-write_csv(tibble(Table3),"../out/table3.csv")
-write_csv(tibble(Table4),"../out/table4.csv")
-
+write_csv(data.frame(Table3),"../out/table3.csv")
+write_csv(data.frame(Table4),"../out/table4.csv")
 
