@@ -119,6 +119,14 @@ for(i in algo) {
 tibble(table1_tbl)
 tibble(table2_tbl)
 
-# Q1: R-squared values vary across different models. Elastic net performs the best in both cross validation and holdout data, whilst linear regression performs the worst. This is because different models differ mathematically and also use different regulization methods.
-# Q2: In general, the models perform better on the holdout sample, which implies that the models do not overfit and predict unseen data well.
-# Q3: I will choose Elastic net as they perform the best on both training and testing data. XGBoost's performance is very close to elastic net's, it might perform better if more refined hyperparameter tuning is applied, so it is a good option too. No tradeoffs. 
+# Q1: xgboost. This is because the time taken for parallelization includes
+#time spent on assigning tasks to different cores and time spent on the 
+#tasks themselves, so that algorithms that take longer to run benefit more
+# from parallelization. XGBoost is an emsemble model that can run multiple trees
+# in parallel, which takes a lot of time if each task is run sequentially
+# as evident by the fact that it takes most time to run in the original model.
+# Therefore, it benefit the most when tasks can be run in parallel.
+# Q2: (xgbTree)386.835 - (lm)10.778 = 376.057. The difference is proportional to
+# the difference among different algorithms obtained by the original models, 
+# although the original difference between the two is much larger. The reason is 
+# that subtrees in xgbTree takes longer to run compared to lm models.
