@@ -18,10 +18,6 @@ gss_tbl<- gss  %>%
   select(where(~mean(is.na(.)) < 0.75)) %>%
   mutate(workhours = as.numeric(workhours)) 
 
-gss_tbl %>% 
-  ggplot(aes(workhours)) +
-  geom_freqpoly()
-
 # Analysis
 split <- round(nrow(gss_tbl) * 0.75)
 
@@ -59,8 +55,8 @@ grids <- function(x) {
   }
 }
 
-table1_tbl <- c()
-table2_tbl <- c()
+Table3 <- c()
+Table4 <- c()
 
 for(i in algo) {
   set.seed(12)
@@ -98,17 +94,21 @@ for(i in algo) {
   # Publication
   cv_rsq <- max(model1$results$Rsquared)
   ho_rsq <- cor(predict(model1, gss_test,na.action = na.pass),gss_test$workhours)^2
-  table <- cbind(i,str_remove(format(round(cv_rsq,2),nsmall=2),"^0"),str_remove(format(round(ho_rsq,2),nsmall=2),"^0"))
-  table1_tbl  <- rbind(table1_tbl ,table)
-  colnames(table1_tbl) <- c("algo","cv_rsq","ho_rsq")
+  table_o <- cbind(i,str_remove(format(round(cv_rsq,2),nsmall=2),"^0"),str_remove(format(round(ho_rsq,2),nsmall=2),"^0"))
+  Table3  <- rbind(Table3,table_o)
+  colnames(Table3) <- c("algo","cv_rsq","ho_rsq")
   
   original <- t1$toc - t1$tic
   parallelized <- t2$toc - t2$tic
-  table2 <- cbind(i,original,parallelized)
-  table2_tbl <- rbind(table2_tbl,table2)
-  colnames(table2_tbl) <- c("algo","original","parallelized")
+  table_p <- cbind(i,original,parallelized)
+  Table4 <- rbind(Table4,table_p)
+  colnames(Table4) <- c("algo","supercomputer","supercomputer_7")
 }
 
-tibble(table1_tbl)
-tibble(table2_tbl)
+tibble(Table3)
+tibble(Table4)
+
+write_csv(tibble(Table3),"../out/table3.csv")
+write_csv(tibble(Table4),"../out/table4.csv")
+
 
