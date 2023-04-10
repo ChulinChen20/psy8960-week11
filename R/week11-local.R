@@ -122,11 +122,14 @@ tibble(table2_tbl)
 # Q1: xgboost. This is because the time taken for parallelization includes
 #time spent on assigning tasks to different cores and time spent on the 
 #tasks themselves, so that algorithms that take longer to run benefit more
-# from parallelization. XGBoost is an emsemble model that can run multiple trees
+# from parallelization. XGBoost is an ensemble model that can run multiple trees
 # in parallel, which takes a lot of time if each task is run sequentially
 # as evident by the fact that it takes most time to run in the original model.
 # Therefore, it benefit the most when tasks can be run in parallel.
-# Q2: (xgbTree)386.835 - (lm)10.778 = 376.057. The difference is proportional to
+# Q2: (xgbTree)386.835 - (lm)10.778 = 376.057.The difference is proportional to
 # the difference among different algorithms obtained by the original models, 
 # although the original difference between the two is much larger. The reason is 
-# that subtrees in xgbTree takes longer to run compared to lm models.
+# that subtrees in xgbTree takes longer to run compared to individual lm models.
+# Q3: elastic net: because it provides the best prediction on both training 
+# and test data. It also takes relatively less time to run compared to models 
+# with similar level of performance (i.e. XGBoost).
