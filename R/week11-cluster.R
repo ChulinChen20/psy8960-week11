@@ -116,3 +116,10 @@ tibble(Table4)
 write_csv(data.frame(Table3),"../out/table3.csv")
 write_csv(data.frame(Table4),"../out/table4.csv")
 
+# Q1:similar to the locally run models, XGBoost benefit the most because of
+# the same reasons.
+# Q2: Assuming that the job is highly parallel, more cores means that more
+# tasks can be run at the same time, which leads to faster processing time.
+# Q3: I will still select elastic net based on a joined consideration of
+# performance and run time. I think the use of supercomputer is unnecessary 
+# for the model given that it runs pretty fast locally.
