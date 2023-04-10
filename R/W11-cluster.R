@@ -12,7 +12,6 @@ library(doParallel)
 gss <- read_sav("../data/GSS2016.sav")
 
 gss_tbl<- gss  %>%
-  # Remove the other two “work hours” variables
   select(-HRS2, -MOSTHRS)   %>%
   filter(is.na(HRS1) != T) %>%
   rename(workhours = HRS1) %>%
@@ -63,11 +62,9 @@ grids <- function(x) {
 table1_tbl <- c()
 table2_tbl <- c()
 
-# fit models
 for(i in algo) {
   set.seed(12)
   
-  #original model
   tic()
   model1 <- train(
     workhours~.,
@@ -80,11 +77,9 @@ for(i in algo) {
   )
   t1<- toc()
   
-  # turn on parallel processing
   local_cluster <- makeCluster(7)
   registerDoParallel(local_cluster)
   
-  # parallelized models
   tic()
   model2 <- train(
     workhours~.,
@@ -96,8 +91,7 @@ for(i in algo) {
     trControl=trainControl(method="cv",number=10, verboseIter=T)
   )
   t2<- toc()
-
-  # turn off parallel processing
+  
   stopCluster(local_cluster)
   registerDoSEQ()
   
@@ -108,7 +102,6 @@ for(i in algo) {
   table1_tbl  <- rbind(table1_tbl ,table)
   colnames(table1_tbl) <- c("algo","cv_rsq","ho_rsq")
   
-  # combine algorithm names, time taken for original, time taken for parallelized into a table
   original <- t1$toc - t1$tic
   parallelized <- t2$toc - t2$tic
   table2 <- cbind(i,original,parallelized)
@@ -119,6 +112,3 @@ for(i in algo) {
 tibble(table1_tbl)
 tibble(table2_tbl)
 
-# Q1: R-squared values vary across different models. Elastic net performs the best in both cross validation and holdout data, whilst linear regression performs the worst. This is because different models differ mathematically and also use different regulization methods.
-# Q2: In general, the models perform better on the holdout sample, which implies that the models do not overfit and predict unseen data well.
-# Q3: I will choose Elastic net as they perform the best on both training and testing data. XGBoost's performance is very close to elastic net's, it might perform better if more refined hyperparameter tuning is applied, so it is a good option too. No tradeoffs. 
